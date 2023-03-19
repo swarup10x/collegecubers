@@ -156,7 +156,7 @@ function Init() {
                 imgBlenderPainted.onload = "";
             }
         } catch (error) {
-            setTimeout(Init, 5000);
+            setTimeout(Init, 4000);
         }
 
         

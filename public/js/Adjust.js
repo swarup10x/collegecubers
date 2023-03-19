@@ -114,6 +114,9 @@ function AdjustByShade () {
         canvasOUT.width = imgOriginal.width;
         canvasOUT.height = imgOriginal.height;
         console.log('canvasOUT.height',canvasOUT.height)
+        try {
+            
+  
         var ctx = canvasOUT.getContext("2d");
         ctx.drawImage(imgOriginal, 0, 0);
         var imgData = ctx.getImageData(0, 0, imgOriginal.width, imgOriginal.height);
@@ -138,6 +141,9 @@ function AdjustByShade () {
                 AutoSaveInitial = false;
             }
         }
+    } catch (error) {
+        setTimeout(AdjustByShade, 4000);
+    }
     }
 }
 
