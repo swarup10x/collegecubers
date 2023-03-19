@@ -134,7 +134,7 @@ function setLeftButtonState(e) {
         ? e.which === 1
         : e.buttons === 1;
 }
-
+let retry=0
 function Init() {
     var slashedSource=imgPainted.src.split('http://localhost:3000/Paint/')[1]
     if ( slashedSource!= "") {
@@ -156,7 +156,13 @@ function Init() {
                 imgBlenderPainted.onload = "";
             }
         } catch (error) {
-            setTimeout(Init, 4000);
+            console.log('error')
+            if(retry<1){
+                retry++
+                setTimeout(Init, 2500);
+            }else{
+                hideWaitSpinner();
+            }
         }
 
         

@@ -7,19 +7,19 @@ var zoomValue;
 var createSliderLargeFirstUpdate = true;
 var AutoSaveInitial = true;
 
-function init(){
+function init() {
     console.log('calling adjust init')
-    imgOriginal.src=""
+    imgOriginal.src = ""
     let imageDataUrl = sessionStorage.getItem('Adjust')
     if (!imageDataUrl) imageDataUrl = sessionStorage.getItem('Crop')
     if (!imageDataUrl) imageDataUrl = sessionStorage.getItem('OG')
-    if (imageDataUrl){
+    if (imageDataUrl) {
         console.log('setting adjust load image')
         imgOriginal.src = imageDataUrl
-        console.log('imgOriginal.src',imgOriginal.src,imgOriginal.src.width)
-    } 
+        console.log('imgOriginal.src', imgOriginal.src, imgOriginal.src.width)
+    }
 
-    
+
     console.log(imgOriginal.src)
     console.log(imageDataUrl)
     imgOriginal.onload = function () {
@@ -32,8 +32,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     console.log('Adjust, dom contentloaded')
 
-init()
-   
+    init()
+
 
 
     setColorsIfSaved();
@@ -56,8 +56,8 @@ init()
 //Functions
 //-----------------------------------------------------------
 function setColorsIfSaved() {
-    let foundColors=JSON.parse(sessionStorage.getItem('colors'));
-    let foundSliderColorValues=JSON.parse(sessionStorage.getItem('sliderColorValues'));
+    let foundColors = JSON.parse(sessionStorage.getItem('colors'));
+    let foundSliderColorValues = JSON.parse(sessionStorage.getItem('sliderColorValues'));
     if (foundColors && foundSliderColorValues) {
         sliderColorValues = foundSliderColorValues;
         colors = foundColors;
@@ -73,77 +73,80 @@ function setColorsIfSaved() {
 function setSliderColorValues(c) {
     sliderColorValues = c.split(',');
 }
-function saveColors(){
-    var pid=sessionStorage.getItem('openedProject')
+function saveColors() {
+    var pid = sessionStorage.getItem('openedProject')
 
-   if(user){
-    fetch(`/Identity/Account/Project/Updatedata?projectid=${pid}`, {
-        method: "POST",
-        body: JSON.stringify({sliderColorValues,colors}),
-        headers: {
-            "Content-Type": "application/json",
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-    })
-    .catch(error => {
-        console.error(error);
-    });
-   }
+    if (user) {
+        fetch(`/Identity/Account/Project/Updatedata?projectid=${pid}`, {
+            method: "POST",
+            body: JSON.stringify({ sliderColorValues, colors }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
 
-    sessionStorage.setItem('sliderColorValues',JSON.stringify(sliderColorValues))
-    sessionStorage.setItem('colors',JSON.stringify(colors))
-   
+    sessionStorage.setItem('sliderColorValues', JSON.stringify(sliderColorValues))
+    sessionStorage.setItem('colors', JSON.stringify(colors))
+
 }
 function setSessionImageAdjust() {
     if (autoSaveDirty < 1) {
         saveColors()
         imageSaveToServer(imgAdjust, 'Adjust', "AdjustPage")
-        
+
         return false;
     }
 }
-
-function AdjustByShade () {
-    var slashedSource=imgOriginal.src.split('http://localhost:3000/Adjust/')[1]
+let retry=0
+function AdjustByShade() {
+    var slashedSource = imgOriginal.src.split('http://localhost:3000/Adjust/')[1]
     if (slashedSource != "") {
-        console.log('slashedSource',imgOriginal.src)
+        console.log('slashedSource', imgOriginal.src)
         var canvasOUT = document.createElement("canvas");
         canvasOUT.width = imgOriginal.width;
         canvasOUT.height = imgOriginal.height;
-        console.log('canvasOUT.height',canvasOUT.height)
+        console.log('canvasOUT.height', canvasOUT.height)
         try {
-            
-  
-        var ctx = canvasOUT.getContext("2d");
-        ctx.drawImage(imgOriginal, 0, 0);
-        var imgData = ctx.getImageData(0, 0, imgOriginal.width, imgOriginal.height);
-        for (var i = 0; i < imgData.data.length; i += 4) {
-            var colorIndex_AvgRGB = Math.ceil(1.0 * (imgData.data[i] + imgData.data[i + 1] + imgData.data[i + 2]) / 3);
 
-            var thisColor = getPixelColorByShade(colorIndex_AvgRGB);
-            imgData.data[i] = parseInt("0x" + thisColor.substring(0, 2));
-            imgData.data[i + 1] = parseInt("0x" + thisColor.substring(2, 4));
-            imgData.data[i + 2] = parseInt("0x" + thisColor.substring(4, 6));
-            imgData.data[i + 3] = 255;
-        }
-        ctx.putImageData(imgData, 0, 0);
-        imgAdjust.src = canvasOUT.toDataURL("image/png");
 
-        autoSaveDirty = 0;
-        updateAutoSavedLabel();
+            var ctx = canvasOUT.getContext("2d");
+            ctx.drawImage(imgOriginal, 0, 0);
+            var imgData = ctx.getImageData(0, 0, imgOriginal.width, imgOriginal.height);
+            for (var i = 0; i < imgData.data.length; i += 4) {
+                var colorIndex_AvgRGB = Math.ceil(1.0 * (imgData.data[i] + imgData.data[i + 1] + imgData.data[i + 2]) / 3);
 
-        imgAdjust.onload = function () {
-            if (AutoSaveInitial) {
-                setSessionImageAdjust();
-                AutoSaveInitial = false;
+                var thisColor = getPixelColorByShade(colorIndex_AvgRGB);
+                imgData.data[i] = parseInt("0x" + thisColor.substring(0, 2));
+                imgData.data[i + 1] = parseInt("0x" + thisColor.substring(2, 4));
+                imgData.data[i + 2] = parseInt("0x" + thisColor.substring(4, 6));
+                imgData.data[i + 3] = 255;
+            }
+            ctx.putImageData(imgData, 0, 0);
+            imgAdjust.src = canvasOUT.toDataURL("image/png");
+
+            autoSaveDirty = 0;
+            updateAutoSavedLabel();
+
+            imgAdjust.onload = function () {
+                if (AutoSaveInitial) {
+                    setSessionImageAdjust();
+                    AutoSaveInitial = false;
+                }
+            }
+        } catch (error) {
+            if (retry < 1) {
+                retry++
+                setTimeout(AdjustByShade, 2500);
             }
         }
-    } catch (error) {
-        setTimeout(AdjustByShade, 4000);
-    }
     }
 }
 
