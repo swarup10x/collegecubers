@@ -148,6 +148,7 @@ app.post('/Identity/Account/Register', async (req, res) => {
         console.log(result.insertedId)
         user['_id'] = result.insertedId.toString()
         fs.mkdirSync('Uploads/' + user['_id'])
+        console.log('user directory created')
 
         console.log(user)
 
