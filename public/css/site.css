@@ -1,0 +1,128 @@
+/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+/* Provide sufficient contrast against white background */
+a {
+  color: #0366d6;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  font-size: 14px;
+}
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+  background-image: url(/Images/bg4.png);
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; /* Vertically center the text there */
+    background-color: #0353a0;
+}
+.header {
+    background-color: #0353a0 !important;
+}
+
+
+/*bootstrap sets this to 1140px, I override to make it full width*/
+    .container {
+        max-width: 100% !important ;
+    }
+
+.hideDiv {
+    visibility: hidden;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+/*for the Header to highlight active page*/
+.navbar-nav > .active > a,
+.nav > .active > a {
+    background-color: #e20613 !important;
+    color: white !important;
+    border-radius: 5px;
+}
+
+.noWrap{ white-space:nowrap;}
+
+
+.menuBar {
+    background-color: rgb(246,245,248);
+    border: 1px solid rgb(222,218,229);
+    border-radius: 5px;
+}
+
+.drawBar {
+    background-color: rgb(246,245,248);
+    border: 1px solid rgb(222,218,229);
+    border-radius: 5px;
+}
+
+.spacer {
+    padding-bottom: 10px;
+}
+
+h6 {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.titleBlue{background-color:#0353a0; color: white;}
+.titleGreen{background-color:#08a139; color: white;}
+.titleRed{background-color:#e20613; color: white;}
+.titleOrange{background-color:#ee7d05; color: white;}
+.titleYellow{background-color:#ffe004; color: black;}
+.titleWhite{background-color:#ffffff; color: black;}

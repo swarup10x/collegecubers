@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cube Layout - CollegeCubers</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/site.css" />
+    <script src="https://kit.fontawesome.com/d42e95d25d.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light titleBlue border-bottom box-shadow mb-3">
+            <div class="container">
+                <a id="aLogo" class="navbar-brand" href="/">CollegeCubers</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+
+
+                    <ul class="navbar-nav">
+                        <li class="nav-item ">
+                            <a class="nav-link text-light" id="register" href="/Identity/Account/Register">Register</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link text-light" id="login" href="/Identity/Account/Login">Login</a>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                        <li class="nav-item ">
+                            <a class="nav-link text-light" href="/">Home</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link text-light" href="/Instructions">Instructions</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link text-light" href="/Crop">Crop</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link text-light" href="/Adjust">Adjust</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link text-light" href="/Paint">Paint</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link text-light" href="/CubeLayout">Cube Layout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+
+            <link href="/css/nouislider.css?version=&amp;v=Q04yR8xzX-vefrueqTU2UNFOn2AchdaXdokRbq8cy8U"
+                rel="stylesheet" />
+            <link href="/css/CubeLayout.css?version=&amp;v=gyTYuMyQMcNzRWSt8QXzq-CvdOYJ5pUxNtBiKYv5e7M"
+                rel="stylesheet" />
+
+            <div class="d-flex flex-wrap justify-content-left mb-2">
+                <div class="menuBar">
+                    <h6>Image From:</h6>
+                    <div class="form-check ml-2">
+                        <input class="form-check-input text-dark" type="radio" name="imageFromRadios" id="radioCrop"
+                            value="Crop" onchange="toggleImageFrom(this);" />
+                        <label class="form-check-label" for="radioCrop">
+                            Crop
+                        </label>
+                    </div>
+                    <div class="form-check ml-2">
+                        <input class="form-check-input" type="radio" name="imageFromRadios" id="radioPaint"
+                            value="Paint" onchange="toggleImageFrom(this);" />
+                        <label class="form-check-label" for="radioPaint">
+                            Paint
+                        </label>
+                    </div>
+                </div>
+                <div class="menuBar flex-grow-1">
+                    <h6>Get this Section:</h6>
+                    <div class="form-inline ml-2">
+                        <div class="form-group pr-5">
+                            <label for="txtStartX">Start X Coordinate:</label>
+                            <input type="number" id="txtStartX" min="1" onkeypress="return textBoxNumbersOnly()"
+                                onchange="checkRange(this);" class="form-control form-control-sm" />
+                        </div>
+                        <div class="form-group">
+                            <label for="txtNumberXcubes"># of Cubes on X Axis:</label>
+                            <input type="number" id="txtNumberXcubes" min="1" onkeypress="return textBoxNumbersOnly()"
+                                class="form-control form-control-sm" />
+                        </div>
+                    </div>
+                    <div class="form-inline ml-2">
+                        <div class="form-group pr-5">
+                            <label for="txtStartY">Start Y Coordinate:</label>
+                            <input type="number" id="txtStartY" min="1" onkeypress="return textBoxNumbersOnly()"
+                                class="form-control form-control-sm" />
+                        </div>
+                        <div class="form-group pr-5">
+                            <label for="txtNumberYcubes"># of Cubes on Y Axis:</label>
+                            <input type="number" id="txtNumberYcubes" min="1" onkeypress="return textBoxNumbersOnly()"
+                                class="form-control form-control-sm" />
+                        </div>
+                        <div class="mb-2">
+                            <button onclick="LoadLayout();" class="btn btn-dark btn-sm">Update Layout</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="menuBar flex-grow-1">
+                    <h6>Zoom:</h6>
+                    <div class="slider mx-4 mb-2" id="sliderZoom" style="min-width:100px;"></div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 drawBar">
+                        <div class="mt-1" id="divLayoutArea"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hideDiv">
+                <img id="imgOriginal" style="visibility:hidden;" />
+                <img id="imgPaint" style="visibility:hidden;" />
+                <img id="imgCrop" style="visibility:hidden;" />
+            </div>
+
+
+
+        </main>
+    </div>
+
+    <footer class="border-top footer text-light">
+        <div class="container d-sm-inline-flex flex-sm-row-reverse">
+            <div>
+                <a href="https://www.instagram.com/CollegeCubers/" class="text-light" target="_blank"><i
+                        class="fab fa-instagram fa-3x mt-0 mb-0 align-middle"></i></a>
+            </div>
+            <div class="mr-2">
+                <a href="https://www.facebook.com/CollegeCubers/" class="text-light" target="_blank"><i
+                        class="fab fa-facebook fa-3x mt-0 mb-0 align-middle"></i></a>
+            </div>
+            <ul class="navbar-nav flex-grow-1">
+                <li>&copy; 2020 - CollegeCubers - <a class="text-light" href="/Privacy">Privacy</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <!--wait Spinner Modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="spinnerModal">
+        <div class="modal-dialog modal-dialog-centered text-center" role="document">
+            <div class="modal-body">
+                <div class="spinner-border text-light" role="status" style="width: 100px; height: 100px;">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- info Modal -->
+    <div class="modal fade" id="modalInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalInfoTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalInfoBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"></script>
+    <script src="/js/site.js"></script>
+
+    <script src="/js/nouislider.js"></script>
+    <script src="/js/CubeLayout.js"></script>
+
+</body>
+
+</html>
+
+
+<script>
+
+    function setTitle() {
+        var colors = ["titleGreen", "titleRed", "titleOrange", "titleYellow", "titleWhite"];
+
+        var title = "CollegeCubers";
+        aLogo.innerHTML = "";
+
+        for (var i = 0; i < title.length; i++) {
+            var thisColor = Math.floor(Math.random() * 5);
+            var span = document.createElement("span");
+
+            span.innerText = title.charAt(i);
+            span.className = colors[thisColor];
+            aLogo.appendChild(span);
+        }
+
+    }
+    setInterval(setTitle, 500);
+</script>

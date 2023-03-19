@@ -1,0 +1,19 @@
+.cImage {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+.cCropArea {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+input[type="number"] {
+    width: 60px !important;
+}
+
+input[type="file"]::after{
+    background-color:red;
+}

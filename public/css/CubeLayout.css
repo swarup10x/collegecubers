@@ -1,0 +1,38 @@
+:root {
+    --tileHW: 15px;
+}
+
+.cont {
+    display: table;
+}
+
+.cubeRow {
+    display: table-row;
+}
+
+.cube {
+    display: table-cell;
+    border: 1px #ccc solid;
+    padding: 3px 3px 3px 3px;
+}
+
+.headerCell {
+    display: table-cell;
+    text-align: center;
+    font-weight: bold;
+    vertical-align: middle;
+    border: 1px #ccc solid;
+}
+
+.tile {
+    will-change: width,height,min-width;
+    width: var(--tileHW);
+    height: var(--tileHW);
+    min-width: var(--tileHW);
+    border: 1px solid #333;
+    display: table-cell;
+}
+
+input[type="number"] {
+    width: 60px !important;
+}

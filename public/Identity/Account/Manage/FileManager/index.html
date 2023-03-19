@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File Manager - CollegeCubers</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/site.css" />
+    <script src="https://kit.fontawesome.com/d42e95d25d.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light titleBlue border-bottom box-shadow mb-3">
+            <div class="container">
+                <a id="aLogo" class="navbar-brand" href="/">CollegeCubers</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    
+
+<ul class="navbar-nav">
+    <li class="nav-item ">
+        <a id="manage" class="nav-link text-light" title="Manage" href="/Identity/Account/Manage/FileManager"><i class="fas fa-user"></i></a>
+    </li>
+    <li class="nav-item">
+        <form id="logoutForm" class="form-inline" action="/Identity/Account/Logout?returnUrl=%2F" method="post">
+            <button id="logout" type="submit" class="nav-link btn btn-link text-light">Logout</button>
+        <input name="__RequestVerificationToken" type="hidden" value="CfDJ8IgtAQauWkVEqa8K9eLk73NyXZ4XXRKuvTh1TXCs1fAwXfWCKULoTsyB5qds_e6nsNZcB85oqtJECR4z7dzu0ns9OPSVuLRTtOf7ocrM5Yui_d8soEmWuClAv1NVOAwBdQH_n77axaL2uokyLjp4P82Xnn7FooHaLRBGuUs-LmHKsdEXdJVoZJo9Wr7hGkO2Ig" /></form>
+    </li>
+</ul>
+
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                        <li class="nav-item ">
+                            <a class="nav-link text-light" href="/">Home</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link text-light" href="/Instructions">Instructions</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link text-light" href="/Crop">Crop</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link text-light" href="/Adjust">Adjust</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link text-light" href="/Paint">Paint</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link text-light" href="/CubeLayout">Cube Layout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            
+<h2>Manage your account</h2>
+
+<div>
+    <h4>Change your account settings</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-3">
+            
+<link href="/css/Manage.css?version=&amp;v=5SOcrEq8OqWoRhKUyEabmbrtoK_VbqFqwZbGB7LeSfo" rel="stylesheet" />
+
+<ul class="nav nav-pills flex-column">
+
+    <li class="nav-item"><a class="nav-link" id="profile" href="/Identity/Account/Manage">Profile</a></li>
+    <li class="nav-item"><a class="nav-link" id="email" href="/Identity/Account/Manage/Email">Email</a></li>
+    <li class="nav-item"><a class="nav-link" id="change-password" href="/Identity/Account/Manage/ChangePasswordRequest">Password</a></li>
+
+    <li class="nav-item active"><a class="nav-link" id="personal-data" href="/Identity/Account/Manage/FileManager">File Manager</a></li>
+
+
+</ul>
+
+        </div>
+        <div class="col-md-9">
+            
+
+
+
+
+<div class="alert alert-secondary mt-1" role="alert">
+    <h6>Disk Space Useage: <span id="disk-size">0.0</span> / 50 MB </h6>
+    <div class="progress">
+        <div class="progress-bar bg-success" role="progressbar" style="width:97.4%">
+            Free Space
+        </div>
+        <div class="progress-bar bg-danger" role="progressbar" style="width:2.6%">
+            Used Space
+        </div>
+    </div>
+</div>
+
+
+<div class="card-columns" id="project-cards">
+            
+            
+</div>
+
+<form method="post" action="/Identity/Account/Manage/FileManager?handler=RenameProject">
+    <div class="modal fade" id="renameModal" tabindex="-1" role="dialog" aria-labelledby="renameModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Project Name</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="textRenameProject" class="form-control" name="newProjectName" value="" />
+                    <input type="hidden" id="hiddenDirectoryOfProject" name="directoryOfProject" value="" />
+                    <input type="hidden" id="hiddenOldProjectName" name="oldProjectName" value="" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button class="btn btn-dark">Rename Project</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<input name="__RequestVerificationToken" type="hidden" value="CfDJ8IgtAQauWkVEqa8K9eLk73NyXZ4XXRKuvTh1TXCs1fAwXfWCKULoTsyB5qds_e6nsNZcB85oqtJECR4z7dzu0ns9OPSVuLRTtOf7ocrM5Yui_d8soEmWuClAv1NVOAwBdQH_n77axaL2uokyLjp4P82Xnn7FooHaLRBGuUs-LmHKsdEXdJVoZJo9Wr7hGkO2Ig" /></form>
+
+<script>
+    function setRenameValues(folder, directoryOfProject) {
+        textRenameProject.value = folder;
+        hiddenDirectoryOfProject.value = directoryOfProject;
+        hiddenOldProjectName.value = folder;
+    }
+</script>
+
+        </div>
+    </div>
+</div>
+
+
+        </main>
+    </div>
+
+    <footer class="border-top footer text-light">
+        <div class="container d-sm-inline-flex flex-sm-row-reverse">
+            <div>
+                <a href="https://www.instagram.com/CollegeCubers/" class="text-light" target="_blank"><i class="fab fa-instagram fa-3x mt-0 mb-0 align-middle"></i></a>
+            </div>
+            <div class="mr-2">
+                <a href="https://www.facebook.com/CollegeCubers/" class="text-light" target="_blank"><i class="fab fa-facebook fa-3x mt-0 mb-0 align-middle"></i></a>
+            </div>
+            <ul class="navbar-nav flex-grow-1">
+                <li>&copy; 2020 - CollegeCubers - <a class="text-light" href="/Privacy">Privacy</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <!--wait Spinner Modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="spinnerModal">
+        <div class="modal-dialog modal-dialog-centered text-center" role="document">
+            <div class="modal-body">
+                <div class="spinner-border text-light" role="status" style="width: 100px; height: 100px;">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- info Modal -->
+    <div class="modal fade" id="modalInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalInfoTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalInfoBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"></script>
+    <script src="/js/site.js"></script>
+    <script src="/js/FileManager.js"></script>
+
+    
+    
+
+</body>
+</html>
+
+
+<script>
+
+    function setTitle() {
+        var colors = ["titleGreen", "titleRed", "titleOrange", "titleYellow", "titleWhite"];
+
+        var title = "CollegeCubers";
+        aLogo.innerHTML = "";
+
+        for (var i = 0; i < title.length; i++) {
+            var thisColor = Math.floor(Math.random() * 5);
+            var span = document.createElement("span");
+
+            span.innerText = title.charAt(i);
+            span.className = colors[thisColor];
+            aLogo.appendChild(span);
+        }
+
+    }
+    setInterval(setTitle, 500);
+</script>
