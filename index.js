@@ -144,6 +144,11 @@ app.post('/Identity/Account/Register', async (req, res) => {
 
     // Perform validation and registration logic here
     try {
+        
+        let existinguser = await db.collection('users').findOne({ 'email': email });
+        if(existinguser){
+            res.status(500).send('User already exists');
+        }
         const result = await db.collection('users').insertOne(user);
         console.log(result.insertedId)
         user['_id'] = result.insertedId.toString()
