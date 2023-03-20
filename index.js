@@ -15,7 +15,7 @@ const upload = multer();
 var app = express()
 
 let url = 'mongodb://127.0.0.1:27017'
-let dbName = 'collegecubers'
+let dbName = 'collegecuber'
 let client, db
 MongoClient.connect(url).then((mclient) => {
     console.log('mongo connected')
