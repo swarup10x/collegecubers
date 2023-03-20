@@ -143,6 +143,7 @@ function AdjustByShade() {
             }
         } catch (error) {
             if (retry < 1) {
+                console.log('retrying')
                 retry++
                 setTimeout(AdjustByShade, 2500);
             }

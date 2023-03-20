@@ -59,7 +59,7 @@ function imageDownload(button, img) {
 
 function imageSaveToServer(img, imageType, suffix) {
 
-    console.log('imageType', imageType)
+    // console.log('imageType', imageType)
     if (img.naturalWidth > 0) {
         var canvas = document.createElement("canvas");
         canvas.width = img.naturalWidth;
