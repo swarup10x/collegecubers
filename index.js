@@ -32,10 +32,6 @@ app.use(serveStatic(path.join(__dirname, 'Uploads')));
 app.get('/Identity/Account/Projects', async (req, res) => {
     console.log('req received /Identity/Account/Projects');
     let user = JSON.parse(req.cookies.user)
-
-
-
-
     try {
         // Perform some action to retrieve data based on the accessToken
         var userprojectpath = `Uploads/${user['_id']}`
@@ -60,8 +56,20 @@ app.get('/Identity/Account/Projects', async (req, res) => {
         res.status(500).send('Error finding user');
     }
     // ...
-
 });
+
+
+
+// app.post('/Admin/Users', async (req, res) => {
+//     let username = req.query.username
+//     let password = req.query.password
+
+//     if(username===AdminUsername && password===AdminPassword){
+//         let users=
+//         res.json()
+//     }
+// });
+
 
 app.post('/Identity/Account/Logout', async (req, res) => {
     console.log('Logging out user');
