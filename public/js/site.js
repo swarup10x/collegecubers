@@ -6,21 +6,17 @@ var autoSaveDirty = 0; //1=Green (no change needed); 0=Yellow (changing); -1:Red
 var inputImagePNG = document.getElementById("inputImagePNG");
 var user = getUserCookie()
 
-const logoutForm = document.querySelector('#logoutForm');
 
-logoutForm?.addEventListener('submit', (event) => {
-  sessionStorage.clear()
-});
 
-console.log('checking user ',user)
-if(user&&user['_id']){
-    console.log('user exists',user)
+console.log('checking user ', user)
+if (user && user['_id']) {
+    console.log('user exists', user)
     //TODO load session projectName,Crop,adjust,paint,{colors,sliderColorValues}
     const registerLink = document.getElementById("register"); // get the link with id "register"
-    if(registerLink){
+    if (registerLink) {
         const parentLi = registerLink.parentNode; // get the parent element (li) of the link
-        const parentUl = parentLi.parentNode; 
-        parentUl.innerHTML=`
+        const parentUl = parentLi.parentNode;
+        parentUl.innerHTML = `
         <li class="nav-item ">
         <a id="manage" class="nav-link text-light" title="Manage" href="/Identity/Account/Manage/FileManager"><i class="fas fa-user"></i></a>
     </li>
@@ -30,6 +26,13 @@ if(user&&user['_id']){
         <input name="__RequestVerificationToken" type="hidden" value="CfDJ8IgtAQauWkVEqa8K9eLk73NyXZ4XXRKuvTh1TXCs1fAwXfWCKULoTsyB5qds_e6nsNZcB85oqtJECR4z7dzu0ns9OPSVuLRTtOf7ocrM5Yui_d8soEmWuClAv1NVOAwBdQH_n77axaL2uokyLjp4P82Xnn7FooHaLRBGuUs-LmHKsdEXdJVoZJo9Wr7hGkO2Ig" /></form>
     </li>
         `
+
+        const logoutForm = document.querySelector('#logoutForm');
+
+        logoutForm?.addEventListener('submit', (event) => {
+            console.log('logging out')
+            clearSessionStorage()
+        });
     }
 
 }
@@ -45,7 +48,7 @@ function clearSessionStorage() {
     sessionStorage.removeItem('colors');
     sessionStorage.removeItem('sliderColorValues');
     sessionStorage.removeItem('openedProject');
-  }
+}
 
 function imageDownload(button, img) {
     var canvas = document.createElement("canvas");
@@ -66,7 +69,7 @@ function imageSaveToServer(img, imageType, suffix) {
         canvas.height = img.naturalHeight;
         var ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0);
-        var imageDataUrl=canvas.toDataURL("image/png")
+        var imageDataUrl = canvas.toDataURL("image/png")
         inputImagePNG.value = imageDataUrl.replace(/^data:image\/(png|jpg);base64,/, "");
         var dataUrl = inputImagePNG.value
         const binaryString = atob(dataUrl);
@@ -84,12 +87,12 @@ function imageSaveToServer(img, imageType, suffix) {
         console.log(formData.values)
 
         console.log(formData)
-        console.log(inputImagePNG.values?'--image found':'--no image found')
+        console.log(inputImagePNG.values ? '--image found' : '--no image found')
 
 
         function finishSetSession() {
             console.log('trying finishsetsession')
-            setSessionImage(imageDataUrl,imageType, suffix).then(hideWaitSpinner())
+            setSessionImage(imageDataUrl, imageType, suffix).then(hideWaitSpinner())
                 .catch((error) => {
                     if (autoSaveDirty == 0) {
                         autoSaveDirty = -1;
@@ -102,22 +105,22 @@ function imageSaveToServer(img, imageType, suffix) {
         console.log('lookin for user')
         if (user) {
             console.log('user found')
-            var projectid=sessionStorage.getItem('openedProject')
+            var projectid = sessionStorage.getItem('openedProject')
             fetch(`/Helpers/ImageHelper?projectid=${projectid}&imageType=${imageType}&suffix=${suffix}&handler=SaveToServer`, {
                 method: 'post',
                 body: formData
-            }).catch((e)=>console.log(e));
-        } 
-            finishSetSession()
-      
+            }).catch((e) => console.log(e));
+        }
+        finishSetSession()
+
     }
 }
 
 function getUserCookie() {
     var key = 'user';
     var cookies = document.cookie.split(';');
-    console.log('cookies',cookies)
-    
+    console.log('cookies', cookies)
+
     for (const cookie of cookies) {
         if (cookie.trim().startsWith(`${key}=`)) {
             let encodedValue = cookie.trim().substr(key.length + 1);
@@ -129,12 +132,12 @@ function getUserCookie() {
             return user;
         }
     }
-    
+
     return undefined;
 }
 
 
-async function setSessionImage(imgDataUrl,imageType, suffix) {
+async function setSessionImage(imgDataUrl, imageType, suffix) {
 
     var input = document.getElementById("inputImage" + suffix);
     var form = document.getElementById("formImage" + suffix);

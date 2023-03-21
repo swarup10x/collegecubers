@@ -1,0 +1,38 @@
+<body style="display:none;">
+    <h2 id="user-count">Users</h2> 
+    <ol id="user-list"></ol>
+    <script src="/js/Admin.js"></script>
+    <script>
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        if (user && user.username && user.password) {
+            document.body.style.display = "block";
+            init();
+        } else {
+            const loginForm = document.createElement('form');
+            const usernameInput = document.createElement('input');
+            const passwordInput = document.createElement('input');
+            const loginButton = document.createElement('button');
+
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const username = usernameInput.value;
+                const password = passwordInput.value;
+                sessionStorage.setItem('user', JSON.stringify({ username, password }));
+                document.body.removeChild(loginForm);
+                document.body.style.display = "block";
+                init();
+            });
+
+            usernameInput.setAttribute('type', 'text');
+            usernameInput.setAttribute('placeholder', 'Username');
+            passwordInput.setAttribute('type', 'password');
+            passwordInput.setAttribute('placeholder', 'Password');
+            loginButton.innerText = 'Login';
+
+            loginForm.appendChild(usernameInput);
+            loginForm.appendChild(passwordInput);
+            loginForm.appendChild(loginButton);
+            document.body.appendChild(loginForm);
+        }
+    </script>
+</body>

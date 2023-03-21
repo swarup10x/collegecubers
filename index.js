@@ -10,9 +10,10 @@ var fsUtils = require("nodejs-fs-utils");
 
 const upload = multer();
 
-
-
 var app = express()
+
+const AdminUsername = 'collegecuber';
+const AdminPassword = 'collegecuber345';
 
 let url = 'mongodb://127.0.0.1:27017'
 let dbName = 'collegecuber'
@@ -60,15 +61,31 @@ app.get('/Identity/Account/Projects', async (req, res) => {
 
 
 
-// app.post('/Admin/Users', async (req, res) => {
-//     let username = req.query.username
-//     let password = req.query.password
+app.get('/Admin/Users', async (req, res) => {
+    console.log('connected users')
+    let username = req.query.username
+    let password = req.query.password
+    const verifierd=username===AdminUsername && password===AdminPassword
+    if(verifierd){
+        console.log('reading users')
+        let users=await db.collection('users').find().toArray();
+        console.log('users',users)
+        res.json({users:users})
+    }else{
+        res.send('bad credenteials')
+    }
+});
+app.get('/Admin/User/Projects', async (req, res) => {
+    console.log('connected projects')
+    let username = req.query.username
+    let password = req.query.password
+    let userid = req.query.userid
 
-//     if(username===AdminUsername && password===AdminPassword){
-//         let users=
-//         res.json()
-//     }
-// });
+    if(username===AdminUsername && password===AdminPassword){
+        const foldres =  fs.readdirSync(`Uploads/${userid}`);
+        res.json({projectids:foldres})
+    }
+});
 
 
 app.post('/Identity/Account/Logout', async (req, res) => {
