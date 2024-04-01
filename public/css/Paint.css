@@ -69,3 +69,35 @@
     will-change: opacity;
     opacity: var(--opacity);
 }
+
+.pixel-holders{
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+#pixel-counter{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    
+}
+
+.pixel-holder-color{
+    border-radius: 1px;
+    margin-top: 1px;
+}
+.pixel-name{
+    font-size: 13px;
+    font-weight: 600;
+
+}
+.pixel-holder-count{
+    font-size: 13px;
+    font-weight: 500;
+}
+
+#pixel-holder-wrapper{
+    display: flex;
+    gap: 16px;
+}

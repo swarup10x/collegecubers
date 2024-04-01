@@ -1,0 +1,102 @@
+var sliderColorValues = [43, 85, 128, 170, 213];
+
+var colors = ["0353a0", "08a139", "e20613", "ee7d05", "ffe004", "FFFFFF"];
+
+function createSliderLarge(a) {
+    noUiSlider.create(sliderColorLarge, {
+        range: {
+            min: 10,
+            max: 60
+        },
+        start: [45]
+    });
+
+    sliderColorLarge.noUiSlider.on('update', function (value) {
+        if (createSliderLargeFirstUpdate)
+            createSliderLargeFirstUpdate = false
+        else {
+            sliderValuesChanging = true;
+
+            for (x = 0; x < sliderColorValues.length; x++) {
+                sliderColor.noUiSlider.setHandle(x, value * (x + 1));
+            }
+
+            AdjustByShade();
+            sliderValuesChanging = false;
+        }
+    });
+}
+
+function createSliderColor() {
+    noUiSlider.create(sliderColor, {
+        start: sliderColorValues,
+        connect: sliderColorConnect,
+        range: {
+            'min': [0],
+            'max': [256]
+        }
+    });
+
+    var connect = sliderColor.querySelectorAll('.noUi-connect');
+    for (var i = 0; i < connect.length; i++) {
+        connect[i].classList.add('c-' + i + '-color');
+    }
+
+    sliderColor.noUiSlider.on('update', function (values) {
+        sliderColorValues = values;
+        // sliderColorValues = [5, 10, 108, 170, 253];
+        createColorPercentageInputs()
+
+        console.log('updating values')
+        console.log(values)
+        console.log(sliderColorValues)
+        inputAdjustSliderColorValues.value = values.toString();
+        if (!sliderValuesChanging) AdjustByShade();
+    });
+
+}
+
+
+
+function calculatePercentage(value, prevValue) {
+    console.log('calculatePercentage',sliderColorValues)
+    console.log('calculatePercentage v p',value,prevValue)
+    var range = value - prevValue; // Calculate the range between the current and previous values
+    console.log('calculatePercentage range',range)
+    return Math.round((range / 256) * 100);
+}
+
+function calculateSliderValue(percentage, prevValue) {
+    var range = 256 - prevValue; // Calculate the range between the previous value and the maximum value (256)
+    return Math.round(prevValue + (range * percentage) / 100);
+}
+function createColorPercentageInputs() {.....}
+
+function handleColorPercentageChange(index, event) {
+    var percentageValue = parseFloat(event.target.value);
+    var newValuesList=[...sliderColorValues]
+    console.log('new values list',newValuesList)
+    var prevValue = index === 0 ? 0 :parseFloat( newValuesList[index - 1]);
+    var newValue = calculateSliderValue(percentageValue, prevValue);
+    // Update newValuesList
+    newValuesList[index] = newValue;
+    
+    // Adjust the next newValuesList if it exists
+    if ((index + 1) < newValuesList.length) {
+        var nextValue =parseFloat(  newValuesList[index + 1]);
+        console.log('new values list',nextValue)
+        var nextPercentage = calculatePercentage(nextValue, newValue);
+        var adjustedNextValue = calculateSliderValue(nextPercentage, newValue);
+        console.log('new values nextPercentage',nextPercentage,adjustedNextValue)
+
+        newValuesList[index + 1] = adjustedNextValue;      
+    }
+
+
+    let values=newValuesList.map((e)=>e.toString())
+///////TODO: needs change here ???
+    sliderColorValues = values;
+}
+
+??? in the handleColorPercentageChange function dynamically send  
+update event on sliderColor.noUiSlider based on newValuesList, so that slider changes based on percentage input

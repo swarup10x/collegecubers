@@ -203,13 +203,42 @@ function checkColorsVsMax(img) {
     }
     return true;
 }
+var colorPixels=[]
+
+function replacePixelHolders(colorPixels) {
+    var pixelHolderWrapper = document.getElementById("pixel-holder-wrapper");
+    pixelHolderWrapper.innerHTML = "";
+  
+    for (var i = 0; i < colorPixels.length; i++) {
+      var pixel = colorPixels[i];
+  
+      var divPixelHolder = document.createElement("div");
+      divPixelHolder.className = "pixel-holders";
+  
+      var spanColor = document.createElement("span");
+      spanColor.style.width = "10px";
+      spanColor.style.height = "10px";
+      spanColor.style.backgroundColor = pixel.tag;
+      spanColor.className = "pixel-holder-color";
+  
+      var spanCount = document.createElement("span");
+      spanCount.className = "pixel-holder-count";
+      spanCount.textContent = pixel.pixels;
+  
+      divPixelHolder.appendChild(spanColor);
+      divPixelHolder.appendChild(spanCount);
+  
+      pixelHolderWrapper.appendChild(divPixelHolder);
+    }
+  }
+  
 
 function updateCanvas() {
-
+    
     colors = [];
     divPaintArea.innerHTML = "";
     divColors.innerHTML = "";
-
+    console.log(colors)
     for (h = 0; h < imgPainted.height; h++) {
         var row = document.createElement("div");
         row.className = "cubeRow";
@@ -224,6 +253,15 @@ function updateCanvas() {
             div.id = "divPaint_" + w + "_" + h;
             div.className = "buckets";
             div.style.backgroundColor = thisColor;
+            let cpItem=colorPixels.find((e)=>e.tag===thisColor)
+            if(cpItem){
+                let cIndex= colorPixels.indexOf(cpItem)
+                colorPixels[cIndex].pixels++
+            }else{
+                colorPixels.push({tag:thisColor,pixels:1})
+            }
+           
+
             div.addEventListener("mousemove", function () {
                 if (leftMouseButtonOnlyDown) performPaint(this, true, paintingColor);
             });
@@ -246,6 +284,9 @@ function updateCanvas() {
 
         divPaintArea.appendChild(row);
     }
+
+    console.log('colorPixels',colorPixels)
+    replacePixelHolders(colorPixels)
     colors.sort((a, b) => (a.totalShade < b.totalShade) ? 1 : -1);
 
     addColorsToColorDiv();
@@ -289,6 +330,24 @@ function performPaint(obj, fromClick, colToPaint) {
         autoSaveDirty = 0;
         updateAutoSavedLabel();
         updateUndoRedoEnabled();
+
+        var newColorPixels = [];
+        for (let h = 0; h < imgPainted.height; h++) {
+            for (let w = 0; w < imgPainted.width; w++) {
+                var pixelDiv = document.getElementById("divPaint_" + w + "_" + h);
+                var pixelColor = pixelDiv.style.backgroundColor;
+                let cpItem = newColorPixels.find((e) => e.tag === pixelColor);
+                if (cpItem) {
+                    let cIndex = newColorPixels.indexOf(cpItem);
+                    newColorPixels[cIndex].pixels++;
+                } else {
+                    newColorPixels.push({ tag: pixelColor, pixels: 1 });
+                }
+            }
+        }
+        colorPixels=newColorPixels;
+        console.log('new color pixels',colorPixels)
+        replacePixelHolders(colorPixels)
     }
 }
 function updateUndoRedoEnabled() {

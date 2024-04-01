@@ -428,41 +428,10 @@ function calculateSliderValue(percentage, index) {
   }
     
 var sliderWidth
-var maxWrapperWidth;
-var needsWidthUpdate=false;
-window.addEventListener('resize', function() {
-    // Call your function here
-    calculateWrapperSizes()
-    needsWidthUpdate=true
-    createColorPercentageInputs();
-
-  });
-
-  function calculateWrapperSizes(){
-    var sliderWrapperssBase =Array.from( document.querySelectorAll('.noUi-base'));
-    var inputs = document.querySelectorAll('.color-percentage-input');
-    var inputs = document.querySelectorAll('.color-percentage-input');
-    var idSliderColor = document.querySelector('#sliderColor');
-    var idSliderColorLarge = document.querySelector('#sliderColorLarge');
-    var idSliderColorPercentage = document.querySelector('#sliderColorPercentage');
-    var idColorAdjustmentContainer = document.querySelector('#colorAdjustmentContainer');
-    var inputWidths=Array.from(inputs).map((e)=>e.getBoundingClientRect().width)
-
-    console.log(inputWidths,'max wrapper width before')
-    maxWrapperWidth = inputWidths.reduce(function (acc, width) {
-        return acc + width;
-      }, 0)
-      console.log(maxWrapperWidth,'max wrapper width before')
-    maxWrapperWidth=Math.round(((inputWidths.length-1)*2)+maxWrapperWidth)
-    console.log(maxWrapperWidth,'max wrapper width')
-    needsWidthUpdate=true
-}
-
   function createColorPercentageInputs() {
     var rowMaxWidth
     var sliderColorPercentage = document.getElementById('sliderColorPercentage');
-
-    var sliderWrapper = document.querySelectorAll('.noUi-connects')[1];
+    var sliderWrapper = document.querySelector('.noUi-connects');
  
     var sliderWrapperChilds = document.getElementsByClassName('noUi-connect');
   
@@ -509,17 +478,23 @@ window.addEventListener('resize', function() {
         var extra = 100 - sum;
         console.log('extra val',sum)
         console.log('extra val',extra)
-        colorPercentageInput.value = extra >0.1 ? extra.toFixed(2) : 0;
+        colorPercentageInput.value = extra >= 0 ? extra.toFixed(2) : 0;
       } else {
         var pVal = calculatePercentage(sliderColorValues[i], i);
-        var floatVal=parseFloat(pVal) 
-        sum= sum +floatVal;
+        sum= sum +parseFloat(pVal) ;
         console.log('sum +=',sum,pVal)
-        colorPercentageInput.value =floatVal>0? pVal:0;
+        colorPercentageInput.value = pVal;
       }
   
-   
-    colorPercentageInput.addEventListener('change', handleColorPercentageChange.bind(null, i));
+      colorPercentageInput.addEventListener('change', handleColorPercentageChange.bind(null, i));
+  
+      colorPercentageInput.addEventListener('focus', function () {
+        this.classList.add('editing');
+      });
+  
+      colorPercentageInput.addEventListener('blur', function () {
+        this.classList.remove('editing');
+      });
   
       colorPercentageInput.style.width = inputWidths[i] + 'px';
       colorPercentageInput.style.borderBottomColor = window.getComputedStyle(sliderWrapperChilds[i]).backgroundColor;
@@ -527,40 +502,14 @@ window.addEventListener('resize', function() {
       // Set the maximum width based on the width of the corresponding input element in the div-wrapper
       //   var maxWidth = sliderColor.getBoundingClientRect().width;
       //   colorPercentageInput.style.maxWidth = inputWidths[i] + 'px';
+      rowMaxWidth=(sliderWrapper.getBoundingClientRect().width)
+    //   inputWrapper.style.maxWidth =rowMaxWidth  + 'px';
       inputWrapper.appendChild(colorPercentageInput);
+
     }
-    
-    sliderColorPercentage.appendChild(inputWrapper);
   
-    updateWrapperSizes()
-
-    
-    
-    function updateWrapperSizes(){
-        var sliderWrapperssBase =Array.from( document.querySelectorAll('.noUi-base'));
-        var inputs = document.querySelectorAll('.color-percentage-input');
-        var inputs = document.querySelectorAll('.color-percentage-input');
-        var idSliderColor = document.querySelector('#sliderColor');
-        var idSliderColorLarge = document.querySelector('#sliderColorLarge');
-        var idSliderColorPercentage = document.querySelector('#sliderColorPercentage');
-        var idColorAdjustmentContainer = document.querySelector('#colorAdjustmentContainer');
-        var inputWidths=Array.from(inputs).map((e)=>e.getBoundingClientRect().width)
-
-        if(!maxWrapperWidth){
-            calculateWrapperSizes()
-        }
-
-        if(needsWidthUpdate){
-
-            idSliderColor.style.maxWidth =(maxWrapperWidth)  + 'px'
-            idSliderColorLarge.style.maxWidth =(maxWrapperWidth)  + 'px'
-            idSliderColorPercentage.style.maxWidth =(maxWrapperWidth)  + 'px'
-            idColorAdjustmentContainer.style.maxWidth=(maxWrapperWidth+48)+'px'
-            needsWidthUpdate=false
-        }
-
-    }
-    // setTimeout(updateWrapperSizes, 1000);
+    sliderColorPercentage.appendChild(inputWrapper);
+    // sliderWrapper.style.maxWidth==sliderWidth+'px'
   }
   
 
@@ -569,7 +518,6 @@ window.addEventListener('resize', function() {
 
 
   function handleColorPercentageChange(index, event) {
-    event.preventDefault()
     var inputValue = parseFloat(event.target.value);
     var newValuesList = [...sliderColorValues];
   

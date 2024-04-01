@@ -9,3 +9,26 @@ input[type="color"] {
     display: grid;
     grid-template-columns: 1fr 1fr 10fr 1fr;
 }
+
+.input-wrapper{
+    display: flex;
+    gap: 2px;
+}
+
+.color-percentage-input {
+    border: none; /* Hide all borders */
+    border-bottom: 1px solid ;
+    text-align: center;
+    padding: 1px;
+    background-color: transparent;
+  }
+
+  /* .color-percentage-input:hover, */
+.color-percentage-input:focus {
+  outline: none; /* Hide the bottom border on hover and focus */
+}
+.color-percentage-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+
+  }

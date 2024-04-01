@@ -28,8 +28,8 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }));
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(serveStatic(path.join(__dirname, 'public')));
-if(!fs.existsSync('/Uploads')){
-    fs.mkdir('/Uploads')
+if(!fs.existsSync('Uploads')){
+    fs.mkdirSync('Uploads')
 }
 app.use(serveStatic(path.join(__dirname, 'Uploads')));
 
@@ -428,7 +428,7 @@ app.post('/Helpers/ImageHelper/', upload.single('image'), async (req, res) => {
 
 
 
-app.listen(80)
+app.listen(3000)
 
 async function createNewProject(user, userId, pid) {
 
