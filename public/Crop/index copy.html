@@ -88,17 +88,9 @@
         <div class="d-flex flex-wrap justify-content-left mx-2">
             <span for="txtMaxNumCubes">Max # of Cubes: </span>
             <input type="number" id="txtMaxNumCubes" min="1" max="3000" value="720" onkeypress="return textBoxNumbersOnly()" onchange="updateScaleNumOFCubes();" class="form-control form-control-sm ml-1" />
-            <button class="btn btn-dark btn-sm mb-2 mx-2" onclick="showWaitSpinner(); cropAndScaleCubes();">Crop & Scale</button>
-            <div id="divScaleStatsCubes">
-                <label id="scaleWidthCubes" style="font-weight:bold;"></label>x<label id="scaleHeightCubes" style="font-weight:bold;"></label>=<label id="scaleTotalCubes" style="font-weight:bold;"></label>&nbsp;Cubes
-            </div>
-        </div>
-        <div class="d-flex flex-wrap justify-content-left mx-2">
-            <span for="txtMaxNumLegos">Max # of Legos: </span>
-            <input type="number" id="txtMaxNumLegos" min="1" max="27000" value="720" onkeypress="return textBoxNumbersOnly()" onchange="updateScaleNumOFLegos();" class="form-control form-control-sm ml-1" />
-            <button class="btn btn-dark btn-sm mb-2 mx-2" onclick="showWaitSpinner(); cropAndScaleLegos();">Crop & Scale</button>
-            <div id="divScaleStatsLegos">
-                <label id="scaleWidthLegos" style="font-weight:bold;"></label>x<label id="scaleHeightLegos" style="font-weight:bold;"></label>=<label id="scaleTotalLegos" style="font-weight:bold;"></label>&nbsp;Legos
+            <button class="btn btn-dark btn-sm mb-2 mx-2" onclick="showWaitSpinner(); cropAndScale();">Crop & Scale</button>
+            <div id="divScaleStats">
+                <label id="scaleWidth" style="font-weight:bold;"></label>x<label id="scaleHeight" style="font-weight:bold;"></label>=<label id="scaleTotal" style="font-weight:bold;"></label>&nbsp;Cubes
             </div>
         </div>
     </div>
@@ -113,28 +105,14 @@
             <div id="divOGStats">
                 <label id="lblWidthPixels" style="font-weight:bold;">
                 </label>x<label id="lblHeightPixels" style="font-weight:bold;"></label>
-                Pixels 
-                <span class="divOGStatsCubes">
-
-                    (
-                    <label id="lblWidthCubes" style="font-weight:bold;"></label>
-                    x
-                    <label id="lblHeightCubes" style="font-weight:bold;"></label>
-                    =
-                    <label id="lblTotalCubes" style="font-weight:bold;"></label>
-                    Cubes) 
-                </sapn>
-                <span class="divOGStatsLegos">
-                    (
-                    <label id="lblWidthLegos" style="font-weight:bold;"></label>
-                    x
-                    <label id="lblHeightLegos" style="font-weight:bold;"></label>
-                    =
-                    <label id="lblTotalLegos" style="font-weight:bold;"></label>
-                    Legos) 
-                </sapn>
+                Pixels (
+                <label id="lblWidthCubes" style="font-weight:bold;"></label>
+                x
+                <label id="lblHeightCubes" style="font-weight:bold;"></label>
+                =
+                <label id="lblTotalCubes" style="font-weight:bold;"></label>
+                Cubes)
             </div>
-            
             <div style="position: relative; left: 0; top: 0;">
                 <canvas id="canvasImage" style="border:1px #bbbbbb solid;" class="cImage"></canvas>
                 <canvas id="canvasCropArea" class="cCropArea"></canvas>
@@ -229,9 +207,7 @@
 
     
     <script src="/js/nouislider.js"></script>
-    <script src="/js/Crop-Root.js"></script>
-    <script src="/js/Crop-Cube.js"></script>
-    <script src="/js/Crop-Lego.js"></script>
+    <script src="/js/Crop.js"></script>
 
 </body>
 </html>

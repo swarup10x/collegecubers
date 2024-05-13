@@ -1,12 +1,15 @@
 var express = require('express')
 const multer = require('multer');
+const https = require('https');
 var serveStatic = require('serve-static')
 var path = require('path')
+var nodemailer = require('nodemailer')
 var fs = require('fs')
 const bodyParser = require('body-parser');
-const { MongoClient, ObjectID } = require('mongodb');
+const { MongoClient } = require('mongodb');
 const cookieParser = require('cookie-parser');
 var fsUtils = require("nodejs-fs-utils");
+require('dotenv').config()
 
 const upload = multer();
 
@@ -18,17 +21,19 @@ const AdminPassword = 'collegecuber345';
 let url = 'mongodb://127.0.0.1:27017'
 let dbName = 'collegecuber'
 let client, db
+
 MongoClient.connect(url).then((mclient) => {
     console.log('mongo connected')
     client = mclient
     db = client.db(dbName);
 })
-
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }));
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(serveStatic(path.join(__dirname, 'public')));
-if(!fs.existsSync('Uploads')){
+if (!fs.existsSync('Uploads')) {
     fs.mkdirSync('Uploads')
 }
 app.use(serveStatic(path.join(__dirname, 'Uploads')));
@@ -68,13 +73,13 @@ app.get('/Admin/Users', async (req, res) => {
     console.log('connected users')
     let username = req.query.username
     let password = req.query.password
-    const verifierd=username===AdminUsername && password===AdminPassword
-    if(verifierd){
+    const verifierd = username === AdminUsername && password === AdminPassword
+    if (verifierd) {
         console.log('reading users')
-        let users=await db.collection('users').find().toArray();
-        console.log('users',users)
-        res.json({users:users})
-    }else{
+        let users = await db.collection('users').find().toArray();
+        console.log('users', users)
+        res.json({ users: users })
+    } else {
         res.send('bad credenteials')
     }
 });
@@ -84,9 +89,9 @@ app.get('/Admin/User/Projects', async (req, res) => {
     let password = req.query.password
     let userid = req.query.userid
 
-    if(username===AdminUsername && password===AdminPassword){
-        const foldres =  fs.readdirSync(`Uploads/${userid}`);
-        res.json({projectids:foldres})
+    if (username === AdminUsername && password === AdminPassword) {
+        const foldres = fs.readdirSync(`Uploads/${userid}`);
+        res.json({ projectids: foldres })
     }
 });
 
@@ -125,7 +130,7 @@ app.post('/Identity/Account/Manage/FileManager', async (req, res) => {
         let user = JSON.parse(req.cookies.user)
         const pid = req.body.directoryOfProject
         if (req.query.handler === 'RenameProject') {
-            //TODO
+
             const newname = req.body.newProjectName
             var filePath = `Uploads/${user['_id']}/${pid}/data.json`
             const data = fs.readFileSync(filePath, 'utf8');
@@ -134,7 +139,7 @@ app.post('/Identity/Account/Manage/FileManager', async (req, res) => {
             fs.writeFileSync(filePath, JSON.stringify(jsonData));
 
         } else if (req.query.handler === 'DeleteProject') {
-            //TODO
+
             console.log('delete project called')
             fs.rmdirSync(`Uploads/${user['_id']}/${pid}`, { recursive: true, force: true })
         }
@@ -172,10 +177,11 @@ app.post('/Identity/Account/Register', async (req, res) => {
 
     // Perform validation and registration logic here
     try {
-        
+
         let existinguser = await db.collection('users').findOne({ 'email': email });
-        if(existinguser){
-            res.status(500).send('User already exists');
+        if (existinguser) {
+            res.status(500).send('<p style="color:red">User already exists! register with a new email<b>');
+            return
         }
         const result = await db.collection('users').insertOne(user);
         console.log(result.insertedId)
@@ -186,8 +192,12 @@ app.post('/Identity/Account/Register', async (req, res) => {
         console.log(user)
 
         res.cookie('user', JSON.stringify(user));
-        var confirmationurl = req.hostname + `/Identity/Account/Manage/VerifyEmail?uid=${user['_id']}`
-        console.log('//TODO: Send email with that url')
+        var confirmationurl = `/Identity/Account/Manage/VerifyEmail?uid=${user['_id']}`
+
+        var subject = "Collegecuber.com : verify email"
+        html = createEmailLink(confirmationurl, 'verify email')
+
+        await sendVerificationEmail(email, subject, html)
         res.redirect('/');
 
     } catch (error) {
@@ -198,6 +208,7 @@ app.post('/Identity/Account/Register', async (req, res) => {
 
 });
 app.post('/Identity/Account/Login', async (req, res) => {
+    console.log('req.body', req.body)
     var email = req.body['Input.Email'];
     var password = req.body['Input.Password'];
     var rememberMe = req.body['Input.RememberMe'];
@@ -207,13 +218,25 @@ app.post('/Identity/Account/Login', async (req, res) => {
     const collection = db.collection('users');
 
     try {
-        user = await collection.findOne({ 'email': email, 'password': password });
+        user = await collection.findOne({ 'email': email });
+
         console.log('found user', user)
-        res.cookie('user', JSON.stringify(user), {
-            expires: new Date(Date.now() + cookieExpiryDays * 24 * 60 * 60 * 1000),
-            // httpOnly: true
-        });
-        res.redirect('/Crop');
+        //TODO: handle no user exist
+        if (!user) {
+            res.json({ success: false, info: "Email not found. please register." })
+        } else {
+            if (user.password === password) {
+                console.log('logging in user')
+                res.cookie('user', JSON.stringify(user), {
+                    expires: new Date(Date.now() + cookieExpiryDays * 24 * 60 * 60 * 1000),
+                    // httpOnly: true
+                });
+                res.json({ success: true, info: "login successful" })
+                // res.redirect('/Crop');
+            } else {
+                res.json({ success: false, info: "Incorrect Email or Password" })
+            }
+        }
     } catch (error) {
         console.error(error);
         res.status(500).send('Error finding user');
@@ -251,10 +274,13 @@ app.post('/Identity/Account/Manage/Email/ChangeRequest', async (req, res) => {
             var requestEmailChangeId = Date.now().toString()
             const result = await db.collection('users').updateOne({ '_id': user['_id'] },
                 { $set: { 'requestEmailChange': { 'id': requestEmailChangeId, 'newemail': newemail } } });
-            var confirmationurl = req.hostname + `/Identity/Account/Manage/Email/VerifyChange?uid=${user['_id']}&requestEmailChangeId=${requestEmailChangeId}`
+            var confirmationurl = `/Identity/Account/Manage/Email/VerifyChange?uid=${user['_id']}&requestEmailChangeId=${requestEmailChangeId}`
             console.log('confirmationurl', confirmationurl)
 
-            console.log('//TODO: Send email with that url')
+            var subject = "Collegecuber.com : verify email change"
+            html = createEmailLink(confirmationurl, 'verify email change request')
+
+            await sendVerificationEmail(email, subject, html)
             res.json({ success: true })
         }
     } catch (error) {
@@ -275,10 +301,14 @@ app.post('/Identity/Account/ForgotPassword/', async (req, res) => {
         var requestResetPasswordId = Date.now().toString()
         const result = await db.collection('users').updateOne({ 'email': email },
             { $set: { 'requestResetPassword': { 'id': requestResetPasswordId } } });
-        var confirmationurl = req.hostname + `/Identity/Account/ForgotPassword/VerifyChange?email=${email}&requestResetPasswordId=${requestResetPasswordId}`
+        var confirmationurl = `/Identity/Account/ForgotPassword/VerifyChange?email=${email}&requestResetPasswordId=${requestResetPasswordId}`
         console.log('confirmationurl', confirmationurl)
 
-        console.log('//TODO: Send email with that url')
+
+        var subject = "Collegecuber.com : verify forgot password request"
+        html = createEmailLink(confirmationurl, 'verify password change')
+
+        await sendVerificationEmail(email, subject, html)
         res.redirect('/Identity/Account/ForgotPasswordConfirmation')
 
     } catch (error) {
@@ -294,7 +324,14 @@ app.get('/Identity/Account/ForgotPassword/VerifyChange', async (req, res) => {
     try {
         var oldUser = await db.collection('users').findOne({ 'email': email })
         if (oldUser.requestResetPasswordId === requestResetPasswordId) {
-            const newpassword=Date.now().toString()
+
+            const currentDate = Date.now().toString(); // Get current date in milliseconds and convert to string
+            const hexCode = parseInt(currentDate).toString(16); // Convert the string to hexadecimal
+
+            const shortenedHexCode = hexCode.substring(2, 10);
+
+            console.log(shortenedHexCode);
+            const newpassword = shortenedHexCode
             const result = await db.collection('users').updateOne({ '_id': oldUser['_id'] },
                 { $set: { 'password': newpassword }, $unset: { 'requestResetPasswordId': 1 } });
             res.send(`<h2 style="text-align:center;color:green"> Your password was reset. new password:<h2> <h2 style="text-align:center;color:blue">${newpassword}<h2>`)
@@ -379,10 +416,13 @@ app.post('/Identity/Account/Manage/ChangePasswordRequest', async (req, res) => {
             var requestPasswordChangeId = Date.now().toString()
             const result = await db.collection('users').updateOne({ '_id': user['_id'] },
                 { $set: { 'requestPasswordChange': { 'id': requestPasswordChangeId, 'newpassword': newpassword } } });
-            var confirmationurl = req.hostname + `/Identity/Account/Manage/ChangePassword/VerifyChange?uid=${user['_id']}&requestEmailChangeId=${requestPasswordChangeId}`
+            var confirmationurl = `/Identity/Account/Manage/ChangePassword/VerifyChange?uid=${user['_id']}&requestEmailChangeId=${requestPasswordChangeId}`
             console.log('confirmationurl', confirmationurl)
 
-            console.log('//TODO: Send email with that url')
+            var subject = "Collegecuber.com : verify change password request"
+            html = createEmailLink(confirmationurl, 'verify password change')
+
+            await sendVerificationEmail(email, subject, html)
             res.send('<h2 style="text-align:center;color:green">Confirmation Request to change password was sent to your email<h2>')
 
         }
@@ -428,7 +468,7 @@ app.post('/Helpers/ImageHelper/', upload.single('image'), async (req, res) => {
 
 
 
-app.listen(3000)
+
 
 async function createNewProject(user, userId, pid) {
 
@@ -449,17 +489,7 @@ async function createNewProject(user, userId, pid) {
 }
 
 
-function forgotPasswordResetRequest(req) {
-    //email=req.email
-    //if email exists in mongo.users
-    //send email with link /passwordReset?uid=,newpass= 
-}
-function resetUserPassword(req) {
-    //uid=req.uid
-    //get user
-    //user.password=req.newpassword
-    //set user
-}
+
 
 
 async function requestEmailChange(uid, email, newemail) {
@@ -491,3 +521,64 @@ function verifyPasswordChangeRequest(req) {
 
 }
 
+
+let yahooSender = "swarup692@yahoo.com"
+let transporter = nodemailer.createTransport({
+    host: 'smtp.mail.yahoo.com',
+    port: 465,
+    service: 'yahoo',
+    secure: false,
+    auth: {
+        user: yahooSender,
+        pass: "zuzvbnrvqkatpjrw"
+    },
+    debug: false,
+    logger: true
+})
+
+
+function createEmailLink(url, buttonTitle) {
+    var origin = 'https://67.223.117.230'
+    return `<div style="text-align: center;"><a href=${origin + url} style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">${buttonTitle}</a></div>`
+
+}
+
+async function sendVerificationEmail(email, subject, html) {
+
+    try {
+        var eres = await transporter.sendMail({
+            to: email,
+            from: yahooSender,
+            subject: subject,
+            html: html
+        })
+        console.log('email sent', eres)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+console.log('process env',process.env.NODE_ENV)
+if (process.env.NODE_ENV==="production") {
+    const privateKeyPath = '...';
+    const certificatePath = '...';
+
+    const privateKey = fs.readFileSync(privateKeyPath, 'utf8');
+    const certificate = fs.readFileSync(certificatePath, 'utf8');
+
+    const credentials = { key: privateKey, cert: certificate };
+
+    const httpsServer = https.createServer(credentials, app);
+
+    const PORT = 443;
+
+    httpsServer.listen(PORT, () => {
+        console.log(`Server is running on https://localhost:${PORT}`);
+    });
+} else {
+    const PORT =process.env.NODE_ENV==="development"? 3000 : 80;
+    app.listen(PORT)
+}
+
+
+// HTTPS configuration

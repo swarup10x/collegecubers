@@ -1,18 +1,22 @@
 // const AdminUsername = 'admin';
 // const AdminPassword = 'password';
 
+console.log('admin page')
+
 let admin = JSON.parse(sessionStorage.getItem('admin'));
 
 async function getUsers() {
   const userList = document.getElementById('user-list');
     const response = await fetch('/Admin/Users?username=' + admin.username + '&password=' + admin.password);
     const data = await response.json();
+    console.log('admin data',data)
     let listcount = document.getElementById('user-count');
     listcount.textContent=`Users (${data.users?.length})`
+    console.log('users',data.users)
     data.users.forEach((user) => {
         const li = document.createElement('li');
         li.setAttribute('class', 'userid');
-        
+        console.log('list created for',user.email)
         li.textContent = user.email;
         const userProjects = document.createElement('div');
         userProjects.setAttribute('id', user._id);

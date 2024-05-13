@@ -3,12 +3,16 @@
 
 <head>
     <title>Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 </head>
 
 <body >
     <main id="main" style="display:none;">
 
-        <h2 id="user-count">Users
+        <h2 id="user-count">Users</h2>
+
         <ol id="user-list"></ol>
     </main>
     <script src="/js/Admin.js"></script>
@@ -19,7 +23,9 @@
 
 <style>
     body {
-    font-family: Arial, sans-serif;
+    font-family: Roboto;
+    margin: 16px;
+    background-color: lightgray;
 }
 
 #user-count {
@@ -36,8 +42,8 @@
 .userid {
     cursor: pointer;
     background-color: #f4f4f4;
-    margin-bottom: 10px;
-    padding: 10px 20px;
+    margin-bottom: 12px;
+    padding: 12px 20px;
     display: list-item;
     list-style-position: inside;
 }
