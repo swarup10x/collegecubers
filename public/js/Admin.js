@@ -18,12 +18,19 @@ async function getUsers() {
         li.setAttribute('class', 'userid');
         console.log('list created for',user.email)
         li.textContent = user.email;
+        const userPassword = document.createElement('div');
+        userPassword.setAttribute('id', 'pass_'+user._id);
+        userPassword.setAttribute('class', 'password-header');
+
         const userProjects = document.createElement('div');
         userProjects.setAttribute('id', user._id);
         userProjects.setAttribute('class', 'project-header');
         li.addEventListener('click', () => {
             
+            li.appendChild(userPassword);
+            userPassword.textContent = 'password: '+user.password;
             li.appendChild(userProjects);
+
             let projlistelem = document.getElementById(user._id);
             async function getUserProjects(userid) {
                 userProjects.textContent = `projects:`;

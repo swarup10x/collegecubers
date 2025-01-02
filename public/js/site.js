@@ -40,6 +40,7 @@ if (user && user['_id']) {
 
 
 function clearSessionStorage() {
+    console.log('clearing session storage')
     sessionStorage.removeItem('projectName');
     sessionStorage.removeItem('Adjust');
     sessionStorage.removeItem('Paint');

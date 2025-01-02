@@ -220,6 +220,7 @@ async function handleProjectOpen(event, projectid) {
     await imageUrltoDataUrl(`/${user['_id']}/${projectid}/Adjust.png`, 'Adjust')
     await imageUrltoDataUrl(`/${user['_id']}/${projectid}/Paint.png`, 'Paint')
     
+    
     fetch(`/${user['_id']}/${projectid}/data.json`)
         .then(response => response.json())
         .then(data => {

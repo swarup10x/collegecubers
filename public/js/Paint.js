@@ -24,11 +24,11 @@ var canvasOUT = document.querySelector("#canvas"),
 
 showWaitSpinner();
 $(document).ready(function () {
-
-    let imageDataUrl = sessionStorage.getItem('Adjust')
+    let imageDataUrl = sessionStorage.getItem('Paint')
+    if (!imageDataUrl) imageDataUrl = sessionStorage.getItem('Adjust')
     if (!imageDataUrl) imageDataUrl = sessionStorage.getItem('Crop')
     if (!imageDataUrl) imageDataUrl = sessionStorage.getItem('OG')
-     imgPainted.src = imageDataUrl??"";
+    imgPainted.src = imageDataUrl??"";
     console.log(imgPainted.src)
     console.log(imageDataUrl)
 

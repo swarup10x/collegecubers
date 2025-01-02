@@ -22,6 +22,7 @@ let url = 'mongodb://127.0.0.1:27017'
 let dbName = 'collegecuber'
 let client, db
 
+let expDate=new Date('9999-12-31T23:59:59Z');
 MongoClient.connect(url).then((mclient) => {
     console.log('mongo connected')
     client = mclient
@@ -99,7 +100,6 @@ app.get('/Admin/User/Projects', async (req, res) => {
 app.post('/Identity/Account/Logout', async (req, res) => {
     console.log('Logging out user');
     res.clearCookie('user')
-    // console.log(res.cookies.user)
     res.redirect('/Identity/Account/Logout')
 });
 
@@ -114,7 +114,7 @@ app.post('/Identity/Account/Project/Updatedata', async (req, res) => {
         const jsonData = JSON.parse(data);
         colordata.name = jsonData.name
         fs.writeFileSync(filePath, JSON.stringify(colordata));
-        // console.log(res.cookies.user)
+
         res.json({ success: true })
     } catch (error) {
         console.log(error);
@@ -143,7 +143,7 @@ app.post('/Identity/Account/Manage/FileManager', async (req, res) => {
             console.log('delete project called')
             fs.rmdirSync(`Uploads/${user['_id']}/${pid}`, { recursive: true, force: true })
         }
-        // console.log(res.cookies.user)
+
         res.redirect('/Identity/Account/Manage/FileManager/')
     } catch (error) {
         console.log(error);
@@ -191,7 +191,10 @@ app.post('/Identity/Account/Register', async (req, res) => {
 
         console.log(user)
 
-        res.cookie('user', JSON.stringify(user));
+        res.cookie('user', JSON.stringify(user), {
+            expires: expDate,
+            // httpOnly: true
+        });
         var confirmationurl = `/Identity/Account/Manage/VerifyEmail?uid=${user['_id']}`
 
         var subject = "Collegecuber.com : verify email"
@@ -214,7 +217,7 @@ app.post('/Identity/Account/Login', async (req, res) => {
     var rememberMe = req.body['Input.RememberMe'];
 
     console.log({ email, password })
-    var cookieExpiryDays = rememberMe ? 7 : 1
+
     const collection = db.collection('users');
 
     try {
@@ -228,7 +231,7 @@ app.post('/Identity/Account/Login', async (req, res) => {
             if (user.password === password) {
                 console.log('logging in user')
                 res.cookie('user', JSON.stringify(user), {
-                    expires: new Date(Date.now() + cookieExpiryDays * 24 * 60 * 60 * 1000),
+                    expires: expDate,
                     // httpOnly: true
                 });
                 res.json({ success: true, info: "login successful" })
@@ -371,7 +374,10 @@ app.post('/Identity/Account/Manage', async (req, res) => {
             user.facebook = facebook
             user.instagram = instagram
             user.twitter = twitter
-            res.cookie('user', JSON.stringify(user));
+            res.cookie('user', JSON.stringify(user), {
+                expires: expDate,
+                // httpOnly: true
+            });
 
             res.send('<h2 style="text-align:center;color:green">Congrats! Your profile info was changed<h2>')
         }
@@ -458,7 +464,6 @@ app.post('/Helpers/ImageHelper/', upload.single('image'), async (req, res) => {
             const filePath = `./Uploads/${userId}/${projectid}/${fileName}`;
             fs.writeFileSync(filePath, imageData.buffer);
             console.log(user)
-            res.cookie('user', JSON.stringify(user));
         }
     } catch (error) {
         console.log(error)
